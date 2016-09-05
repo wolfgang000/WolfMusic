@@ -5,19 +5,45 @@
 		<title>Index</title>
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
 		<script>
+			var setPlayerSource = function(url){
+				var player = document.getElementById("player");
+				player.innerHTML = "";
+				var src = document.createElement("source");
+				src.src = url;
+				src.type = "audio/mpeg";
+				player.appendChild(src);
+				player.load();
+			};
 			$(document).ready(function() {
-					$.ajax({
-						url: "{% url 'tracks.list' %}",
-						success: function(data) {
-							console.log(data);
-						}
-					})
-				});
+				$.ajax({
+					url: "{% url 'tracks.list' %}",
+					success: function(data) {
+						console.log(data);
+						list = document.getElementById("list");
+						data.forEach(
+							function (item, index) {
+								var lable = document.createElement("lable");
+								lable.innerHTML = item.title;
+								var btn = document.createElement("button");
+								btn.innerHTML = "Select";
+								btn.onclick = function() {setPlayerSource(item.file)};
+								list.appendChild(lable);
+								list.appendChild(btn);
+								list.appendChild(document.createElement("br"));
+							}
+						)
+					}
+				})
 			});
+			
 		</script>
 	</head>
 	<body>
 		<div id="list">
+		</div>
+		<div id="divPlayer">
+			<audio controls id="player">
+			</audio>
 		</div>
 	</body>
 </html>

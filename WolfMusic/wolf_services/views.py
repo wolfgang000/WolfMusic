@@ -20,11 +20,16 @@ class TrackDetail(APIView):
 		serializer = serializers.Track(obj,context={'request':request})
 		return Response(serializer.data)
 
+	def delete(self, request, pk, format=None):
+		obj = self.get_object(pk)
+		del obj
+		return Response(status=status.HTTP_200_OK)
+
 class TrackList(APIView):
 	parser_classes = (MultiPartParser, FormParser,)
 	def get(self, request, format=None):
 		tracks = models.Track.objects.all()
-		serializer = serializers.Track(tracks, many=True,)
+		serializer = serializers.Track(tracks, many=True,context={'request':request})
 		return Response(serializer.data)
 		
 	def post(self, request, format=None):
