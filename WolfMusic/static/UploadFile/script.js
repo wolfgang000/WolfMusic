@@ -1,11 +1,13 @@
 var UploadFile = function() {
 	var data;
 	var uploadForm = document.getElementById("uploadForm");
+	var form = new FormData(document.forms.namedItem("fileUpload"));
 	$.ajax({
 		type: "POST",
 		url: tracksUrl ,
-		data: uploadForm,
+		data: form,
 		contentType: false,
+		processData: false,
 		success: function(data){
 			alert("Archivo subido con exito");
 		},
@@ -14,8 +16,5 @@ var UploadFile = function() {
 		}
 		
 	});
-	return false;
-	console.log('a');
-	alert('b');
 	return false;
 };
