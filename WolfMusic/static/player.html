@@ -5,21 +5,8 @@
 		<meta charset="utf-8">
 		<title>Index</title>
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
-		<script src="{% static 'UploadFile/script.js' %}"></script>
 		<script>
 			var staticDomain = "{% static '' %}"; 
-			var tracksUrl = "";
-			
-			var loadRootUrls = function() {
-				$.ajax({
-					url: "{% url 'root' %}",
-					async: false,
-					success: function(data) {
-						tracksUrl = data.tracks_url;
-					}
-				})
-			};
-			
 			var setPlayerSource = function(url,type){
 				var divPlayer = document.getElementById("divPlayer");
 				var player = divPlayer.getElementsByTagName("audio")[0];
@@ -33,16 +20,48 @@
 			var setUploadFileForm  = function() {
 				var divPlayer = document.getElementById("divUploadForm");
 				divPlayer.innerHTML = "";
+				var fileLable = document.createElement("lable");
+				fileLable.innerHTML = "Archivo";
+				
+				var fileInput = document.createElement("input");
+				fileInput.name = "file";
+				fileInput.type = "file";
+				fileInput.accept = ".mp3,.ogg";
 
-				$.get(staticDomain+"UploadFile/form.html", function(data, status){
-					divPlayer.innerHTML = data;
-				});
-
+				
+				divPlayer.appendChild(fileLable);
+				divPlayer.appendChild(fileInput);
+				divPlayer.appendChild(document.createElement("br"));
+				
+				var titleLable = document.createElement("lable");
+				titleLable.innerHTML = "Titulo";
+				
+				var titleInput = document.createElement("input");
+				titleInput.name = "title";
+				titleInput.type = "text";
+				
+				divPlayer.appendChild(titleLable);
+				divPlayer.appendChild(titleInput);
+				divPlayer.appendChild(document.createElement("br"));
+				
+				var btn = document.createElement("button");
+				btn.innerHTML = "Subir";
+				btn.onclick = function() {setPlayerSource(item.file,item.type)};
 			};
-
+			var UploadFile = function() {
+				
+				
+				$.ajax({
+					type: "POST",
+					url: "{% url 'tracks.list' %}",
+					data: data,
+					success: success,
+					dataType: dataType
+				});
+			};
 			var loadList = function() {
 				$.ajax({
-					url: tracksUrl,
+					url: "{% url 'tracks.list' %}",
 					success: function(data) {
 						console.log(data);
 						list = document.getElementById("list");
@@ -64,7 +83,6 @@
 			
 			
 			$(document).ready(function() {
-				loadRootUrls();
 				loadList();
 			});
 			
