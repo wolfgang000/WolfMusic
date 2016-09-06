@@ -16,5 +16,5 @@ class Track(serializers.ModelSerializer,BaseClass):
 	url = serializers.SerializerMethodField('get_full_url', read_only=True)
 	class Meta:
 		model = models.Track
-		fields = ('url','id','title','file',)
-		read_only_fields = ('url','id','title', 'file',)
+		fields = ('url','id','title','file','name','type')
+		read_only_fields = ('url','id','title','file','name','type')

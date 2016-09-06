@@ -5,16 +5,16 @@
 		<title>Index</title>
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
 		<script>
-			var setPlayerSource = function(url){
+			var setPlayerSource = function(url,type){
 				var player = document.getElementById("player");
 				player.innerHTML = "";
 				var src = document.createElement("source");
 				src.src = url;
-				src.type = "audio/mpeg";
+				src.type = type;
 				player.appendChild(src);
 				player.load();
 			};
-			$(document).ready(function() {
+			var loadList = function() {
 				$.ajax({
 					url: "{% url 'tracks.list' %}",
 					success: function(data) {
@@ -26,7 +26,7 @@
 								lable.innerHTML = item.title;
 								var btn = document.createElement("button");
 								btn.innerHTML = "Select";
-								btn.onclick = function() {setPlayerSource(item.file)};
+								btn.onclick = function() {setPlayerSource(item.file,item.type)};
 								list.appendChild(lable);
 								list.appendChild(btn);
 								list.appendChild(document.createElement("br"));
@@ -34,11 +34,17 @@
 						)
 					}
 				})
+			};
+			
+			$(document).ready(function() {
+				loadList();
 			});
 			
 		</script>
 	</head>
 	<body>
+		<div id="uploadForm">
+		</div>
 		<div id="list">
 		</div>
 		<div id="divPlayer">

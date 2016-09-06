@@ -1,3 +1,4 @@
+import os.path
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.parsers import FormParser, MultiPartParser
@@ -33,11 +34,18 @@ class TrackList(APIView):
 		return Response(serializer.data)
 		
 	def post(self, request, format=None):
-		file_obj = request.FILES['file']
+		file = request.FILES['file']
 		title = request.data['title']
 		track = models.Track()
-		track.file = file_obj;
+		track.file = file
+		track.name = file.name
 		track.title = title 
+		fileName, fileExtension = os.path.splitext(track.name)
+		if(fileExtension == '.mp3'):
+			track.type = models.Track.TYPE_MP3
+		elif(fileExtension == '.ogg'):
+			track.type = models.Track.TYPE_OGG
+		
 		track.save()
 		serializer = serializers.Track(track)
 		return Response(serializer.data, status=status.HTTP_201_CREATED)
