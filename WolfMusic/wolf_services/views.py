@@ -4,9 +4,16 @@ from rest_framework.response import Response
 from rest_framework.parsers import FormParser, MultiPartParser
 from rest_framework import authentication, permissions
 from rest_framework import status
+from django.urls import reverse
 from . import serializers
 from . import models
 
+
+class RootService(APIView):
+	def get(self, request, format=None):
+		data={}
+		data['tracks_url'] = request.build_absolute_uri(reverse('tracks.list'))
+		return Response(data)
 
 class TrackDetail(APIView):
 	
