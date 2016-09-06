@@ -10,6 +10,7 @@ var UploadFile = function() {
 		processData: false,
 		success: function(data){
 			alert("Archivo subido con exito");
+			loadList();
 		},
 		error: function control(){
 			alert("Error al subir archivo");

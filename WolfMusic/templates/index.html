@@ -33,7 +33,6 @@
 			var setUploadFileForm  = function() {
 				var divPlayer = document.getElementById("divUploadForm");
 				divPlayer.innerHTML = "";
-
 				$.get(staticDomain+"UploadFile/form.html", function(data, status){
 					divPlayer.innerHTML = data;
 				});
@@ -71,7 +70,6 @@
 		</script>
 	</head>
 	<body>
-		"{% static "" %}"
 		<button onclick="setUploadFileForm()">Upload Music</button>
 		<div id="divUploadForm">
 		</div>
