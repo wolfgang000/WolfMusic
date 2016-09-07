@@ -5,6 +5,7 @@ from rest_framework.parsers import FormParser, MultiPartParser
 from rest_framework import authentication, permissions
 from rest_framework import status
 from django.urls import reverse
+import taglib
 from . import serializers
 from . import models
 
@@ -42,11 +43,10 @@ class TrackList(APIView):
 		
 	def post(self, request, format=None):
 		file = request.FILES['file']
-		title = request.data['title']
 		track = models.Track()
 		track.file = file
 		track.name = file.name
-		track.title = title 
+		
 		fileName, fileExtension = os.path.splitext(track.name)
 		if(fileExtension == '.mp3'):
 			track.type = models.Track.TYPE_MP3

@@ -48,17 +48,7 @@
 				btn.innerHTML = "Subir";
 				btn.onclick = function() {setPlayerSource(item.file,item.type)};
 			};
-			var UploadFile = function() {
-				
-				
-				$.ajax({
-					type: "POST",
-					url: "{% url 'tracks.list' %}",
-					data: data,
-					success: success,
-					dataType: dataType
-				});
-			};
+
 			var loadList = function() {
 				$.ajax({
 					url: "{% url 'tracks.list' %}",
