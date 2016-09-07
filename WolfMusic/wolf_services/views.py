@@ -5,7 +5,6 @@ from rest_framework.parsers import FormParser, MultiPartParser
 from rest_framework import authentication, permissions
 from rest_framework import status
 from django.urls import reverse
-import taglib
 from . import serializers
 from . import models
 
