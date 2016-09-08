@@ -6,6 +6,7 @@ from rest_framework.parsers import FormParser, MultiPartParser
 from rest_framework import authentication, permissions
 from rest_framework import status
 from django.urls import reverse
+from django.core.files.base import ContentFile
 from . import serializers
 from . import models
 
@@ -53,10 +54,13 @@ class TrackList(APIView):
 		elif(fileExtension == '.ogg'):
 			track.type = models.Track.TYPE_OGG
 		
+
 		track.save()
-		file = File(track.file)
+		
+		file = File(track.file.path)
 		artwork = file.tags['APIC:'].data 
-		track.artwork = artwork
+		print (track.artwork )
+		track.artwork.save('art.jpg',ContentFile(artwork))
 		track.save()
 		
 		serializer = serializers.Track(track)
