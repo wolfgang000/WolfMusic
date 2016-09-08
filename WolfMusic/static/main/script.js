@@ -10,13 +10,16 @@ var loadPlayer  = function() {
 	});
 }
 
-var setPlayerSource = function(url,type){
+var setPlayerSource = function(obj){
 	var divPlayer = document.getElementById("divPlayer");
+	var divArtwork = document.getElementById("divArtwork");
 	var player = divPlayer.getElementsByTagName("audio")[0];
+	var image = divArtwork.getElementsByTagName("img")[0];
+	image.src = obj.artwork;
 	player.innerHTML = "";
 	var src = document.createElement("source");
-	src.src = url;
-	src.type = type;
+	src.src = obj.url;
+	src.type = obj.type;
 	player.appendChild(src);
 	player.load();
 };
@@ -50,7 +53,7 @@ var loadList = function() {
 					lable.innerHTML = item.title;
 					var btn = document.createElement("button");
 					btn.innerHTML = "Select";
-					btn.onclick = function() {setPlayerSource(item.file,item.type)};
+					btn.onclick = function() {setPlayerSource(item)};
 					list.appendChild(lable);
 					list.appendChild(btn);
 					list.appendChild(document.createElement("br"));
