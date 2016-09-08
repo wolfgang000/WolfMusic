@@ -1,13 +1,17 @@
 var loadPlayer  = function() {
-	var divPlayer = document.getElementById("divPlayer");
+	$("<link/>", {
+		rel: "stylesheet",
+		type: "text/css",
+		href:  staticDomain + "player/style.css"
+	}).appendTo("head");
+	var body = document.getElementsByTagName("BODY")[0];
 	$.get(staticDomain + "player/player.html", function(data, status){
-		divPlayer.innerHTML = data;
+		document.body.innerHTML += data;
 	});
 }
 
 var setPlayerSource = function(url,type){
 	var divPlayer = document.getElementById("divPlayer");
-	
 	var player = divPlayer.getElementsByTagName("audio")[0];
 	player.innerHTML = "";
 	var src = document.createElement("source");
