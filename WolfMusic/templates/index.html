@@ -5,69 +5,20 @@
 		<meta charset="utf-8">
 		<title>Index</title>
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
-		<script src="{% static 'UploadFile/script.js' %}"></script>
 		<script>
 			var staticDomain = "{% static '' %}"; 
-			var tracksUrl = "";
-			
+			var url = {} ;
 			var loadRootUrls = function() {
 				$.ajax({
 					url: "{% url 'root' %}",
 					async: false,
 					success: function(data) {
-						tracksUrl = data.tracks_url;
+						url.tracks = data.tracks_url;
 					}
 				})
 			};
-			
-			var setPlayerSource = function(url,type){
-				var divPlayer = document.getElementById("divPlayer");
-				var player = divPlayer.getElementsByTagName("audio")[0];
-				player.innerHTML = "";
-				var src = document.createElement("source");
-				src.src = url;
-				src.type = type;
-				player.appendChild(src);
-				player.load();
-			};
-			var setUploadFileForm  = function() {
-				var divPlayer = document.getElementById("divUploadForm");
-				divPlayer.innerHTML = "";
-				$.get(staticDomain+"UploadFile/form.html", function(data, status){
-					divPlayer.innerHTML = data;
-				});
-
-			};
-
-			var loadList = function() {
-				$.ajax({
-					url: tracksUrl,
-					success: function(data) {
-						console.log(data);
-						list = document.getElementById("list");
-						data.forEach(
-							function (item, index) {
-								var lable = document.createElement("lable");
-								lable.innerHTML = item.title;
-								var btn = document.createElement("button");
-								btn.innerHTML = "Select";
-								btn.onclick = function() {setPlayerSource(item.file,item.type)};
-								list.appendChild(lable);
-								list.appendChild(btn);
-								list.appendChild(document.createElement("br"));
-							}
-						)
-					}
-				})
-			};
-			
-			
-			$(document).ready(function() {
-				loadRootUrls();
-				loadList();
-			});
-			
 		</script>
+		<script src="{% static 'main/script.js' %}"></script>
 	</head>
 	<body>
 		<button onclick="setUploadFileForm()">Upload Music</button>
@@ -76,8 +27,7 @@
 		<div id="list">
 		</div>
 		<div id="divPlayer">
-			<audio controls id="player">
-			</audio>
 		</div>
+
 	</body>
 </html>
