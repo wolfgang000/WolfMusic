@@ -4,7 +4,7 @@ var UploadFile = function() {
 	var form = new FormData(document.forms.namedItem("fileUpload"));
 	$.ajax({
 		type: "POST",
-		url: tracksUrl ,
+		url: url.tracks ,
 		data: form,
 		contentType: false,
 		processData: false,
