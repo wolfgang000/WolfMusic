@@ -1,4 +1,5 @@
 import os.path
+from mutagen import File
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.parsers import FormParser, MultiPartParser
@@ -53,5 +54,10 @@ class TrackList(APIView):
 			track.type = models.Track.TYPE_OGG
 		
 		track.save()
+		file = File(track.file)
+		artwork = file.tags['APIC:'].data 
+		track.artwork = artwork
+		track.save()
+		
 		serializer = serializers.Track(track)
 		return Response(serializer.data, status=status.HTTP_201_CREATED)

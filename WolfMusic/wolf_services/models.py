@@ -11,7 +11,7 @@ class Track(models.Model):
 		(TYPE_MP3,"mp3"),
 		(TYPE_OGG,"ogg"),
 	)
-	
+	artwork = models.ImageField(upload_to='music/tracks')
 	title = models.CharField(max_length=64,default="")
 	album = models.CharField(max_length=64,default="")
 	artist = models.CharField(max_length=64,default="")
