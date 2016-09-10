@@ -47,6 +47,7 @@ var loadList = function() {
 		success: function(data) {
 			console.log(data);
 			list = document.getElementById("list");
+			list.innerHTML = "";
 			data.forEach(
 				function (item, index) {
 					var lable = document.createElement("lable");

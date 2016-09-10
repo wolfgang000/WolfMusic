@@ -4,7 +4,6 @@ from rest_framework.parsers import FormParser, MultiPartParser
 from rest_framework import authentication, permissions
 from rest_framework import status
 from django.urls import reverse
-
 from . import serializers
 from . import models
 
@@ -41,12 +40,15 @@ class TrackList(APIView):
 		return Response(serializer.data)
 		
 	def post(self, request, format=None):
-		file = request.FILES['file']
-		track = models.Track()
-		track.file = file
-		track.name = file.name
-		track.save()
-		track.updateMetadataSave()
-		
-		serializer = serializers.Track(track)
-		return Response(serializer.data, status=status.HTTP_201_CREATED)
+		files = request.FILES.getlist('file')
+		tracks = []
+		for file in files:
+			track = models.Track()
+			track.file = file
+			track.name = file.name
+			track.save()
+			track.updateMetadataSave()
+			tracks.append(track)
+			
+		serializer = serializers.Track(tracks,many=True,)
+		return Response(serializer.data,status=status.HTTP_201_CREATED)
