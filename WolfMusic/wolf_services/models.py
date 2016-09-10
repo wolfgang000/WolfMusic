@@ -1,8 +1,10 @@
+import os.path
 from django.db import models
 from django.core.urlresolvers import reverse
-from django.db.models.signals import post_save
+from django.core.files.base import ContentFile
 from django.dispatch import receiver
 import taglib
+from mutagen import File
 
 class Track(models.Model):
 	TYPE_MP3 = "audio/mpeg"
@@ -19,21 +21,35 @@ class Track(models.Model):
 	name = models.CharField(max_length=50,default="")
 	type =  models.CharField(max_length=20, choices=FILE_TYPES)
 	file = models.FileField(upload_to='music/tracks')
+	
 	def get_absolute_url(self):
 		return reverse('tracks.detail', args=[str(self.id)])
+	
+	
+	def updateMetadataSave(self):
+		self.updateMetadata()
+		self.save()
+	
+	def setFieldFromTags(self,tags,tag_title,field_name):
+		if tags.get(tag_title) != None:
+			field = ''
+			for tag_title in tags.get(tag_title):
+				field = getattr(self, field_name)
+				field = ''
+				field += tag_title + ' '
+			setattr(self, field_name, field)
 
-@receiver(post_save, sender=Track, dispatch_uid="set_metadata")
-def update_stock(sender, instance, **kwargs):
-	print("postSave")
-	song = taglib.File(instance.file.path)
-	if len(song.tags['TITLE'])> 0:
-		instance.title = song.tags['TITLE'][0]
-	if len(song.tags['ALBUM']) > 0:
-		instance.album = song.tags['ALBUM'][0]
-	if len(song.tags['ARTIST']) > 0:
-		instance.artist = song.tags['ARTIST'][0]
-	if len(song.tags['GENRE']) > 0:
-		instance.genre = song.tags['GENRE'][0]
-		
-	Track.objects.filter(pk=instance.pk).update(title=instance.title, album=instance.album, artist=instance.artist, genre=instance.genre)
-		
+	def updateMetadata(self):
+		song = taglib.File(self.file.path)		
+		self.setFieldFromTags(song.tags,'TITLE','title')
+		self.setFieldFromTags(song.tags,'ALBUM','album')
+		self.setFieldFromTags(song.tags,'ARTIST','artist')
+		self.setFieldFromTags(song.tags,'GENRE','genre')
+		file = File(self.file.path)
+		artwork = file.tags['APIC:'].data 
+		self.artwork.save('art.jpg',ContentFile(artwork))
+		fileName, fileExtension = os.path.splitext(self.file.name)
+		if(fileExtension == '.mp3'):
+			self.type = self.TYPE_MP3
+		elif(fileExtension == '.ogg'):
+			self.type = self.TYPE_OGG
