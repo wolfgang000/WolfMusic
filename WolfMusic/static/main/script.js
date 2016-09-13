@@ -10,18 +10,23 @@ var loadPlayer  = function() {
 	});
 }
 
-var setPlayerSource = function(url,type,artwork){
+var setPlayerSource = function(idDataObject){
 	var divPlayer = document.getElementById("divPlayer");
 	var divArtwork = document.getElementById("divArtwork");
 	var player = divPlayer.getElementsByTagName("audio")[0];
 	var image = divArtwork.getElementsByTagName("img")[0];
-	image.src = artwork;
+	
+	dataObject = $('#'+idDataObject).data();
+	console.log(dataObject);
+	
+	image.src = dataObject.artwork;
 	player.innerHTML = "";
 	var src = document.createElement("source");
-	src.src = url;
-	src.type = type;
+	src.src = dataObject.file.replace('"','');
+	src.type = dataObject.type;
 	player.appendChild(src);
 	player.load();
+	player.play();
 };
 
 var setUploadFileForm  = function() {
@@ -50,14 +55,24 @@ var loadList = function() {
 			list.innerHTML = "";
 			data.forEach(
 				function (item, index) {
+					var divId = "divTrack"+index;
+					var div = document.createElement("div");
+					div.setAttribute("id",divId);
+					$(div).data(item)
+					console.log($(div).data());
+					
 					var lable = document.createElement("lable");
 					lable.innerHTML = item.title;
 					var btn = document.createElement("button");
 					btn.innerHTML = "Select";
-					btn.onclick = function() {setPlayerSource(item.file,item.type,item.artwork)};
-					list.appendChild(lable);
-					list.appendChild(btn);
-					list.appendChild(document.createElement("br"));
+					btn.onclick = function() {setPlayerSource(divId)};
+					
+					
+					div.appendChild(lable)
+					div.appendChild(btn);
+					div.appendChild(document.createElement("br"));
+					
+					list.appendChild(div);
 				}
 			)
 		}
