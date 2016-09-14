@@ -17,3 +17,10 @@ class Track(serializers.ModelSerializer,BaseClass):
 		model = models.Track
 		fields = ('url','id','file','name','type','title','album','artist','genre','artwork',)
 		read_only_fields = ('url','id','title','file','name','type','album','artist','genre','artwork',)
+
+class Album(serializers.ModelSerializer,BaseClass):
+	url = serializers.SerializerMethodField('get_full_url', read_only=True)
+	class Meta:
+		model = models.Track
+		fields = ('url','id','name',)
+		read_only_fields = ('url','id','name',)

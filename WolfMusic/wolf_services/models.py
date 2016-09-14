@@ -6,6 +6,15 @@ from django.dispatch import receiver
 import taglib
 from mutagen import File
 
+class Album(models.Model):
+	name = models.CharField(max_length=64,default="")
+	
+	def get_absolute_url(self):
+		return reverse('album.detail', args=[str(self.id)])
+
+class Artist(models.Model):
+	name = models.CharField(max_length=64,default="")
+	
 class Track(models.Model):
 	TYPE_MP3 = "audio/mpeg"
 	TYPE_OGG = "audio/ogg"
@@ -15,7 +24,7 @@ class Track(models.Model):
 	)
 	artwork = models.ImageField(upload_to='music/tracks')
 	title = models.CharField(max_length=64,default="")
-	album = models.CharField(max_length=64,default="")
+	album = models.ForeignKey(Album, on_delete=models.CASCADE, null = True)
 	artist = models.CharField(max_length=64,default="")
 	genre = models.CharField(max_length=64,default="")
 	name = models.CharField(max_length=50,default="")
@@ -23,7 +32,7 @@ class Track(models.Model):
 	file = models.FileField(upload_to='music/tracks')
 	
 	def get_absolute_url(self):
-		return reverse('tracks.detail', args=[str(self.id)])
+		return reverse('track.detail', args=[str(self.id)])
 	
 	
 	def updateMetadataSave(self):
@@ -42,11 +51,20 @@ class Track(models.Model):
 	def updateMetadata(self):
 		song = taglib.File(self.file.path)		
 		self.setFieldFromTags(song.tags,'TITLE','title')
-		self.setFieldFromTags(song.tags,'ALBUM','album')
+		if song.tags.get('ALBUM') != None:
+			for album_name in song.tags.get('ALBUM'):
+				try:
+					album = Album.objects.get(name=album_name)
+					self.album = album
+				except Album.DoesNotExist:
+					new_album = Album(name=album_name)
+					new_album.save()
+					self.album = new_album
+
 		self.setFieldFromTags(song.tags,'ARTIST','artist')
 		self.setFieldFromTags(song.tags,'GENRE','genre')
 		file = File(self.file.path)
-		if file.tags.get('APIC:') != None:
+		if file.tags != None and file.tags.get('APIC:') != None:
 			artwork = file.tags['APIC:'].data 
 			self.artwork.save('art.jpg',ContentFile(artwork))
 		fileName, fileExtension = os.path.splitext(self.file.name)

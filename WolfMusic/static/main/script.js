@@ -48,7 +48,7 @@ var setUploadFileForm  = function() {
 
 var loadList = function() {
 	$.ajax({
-		url: url.tracks,
+		url: url.track,
 		success: function(data) {
 			console.log(data);
 			list = document.getElementById("list");

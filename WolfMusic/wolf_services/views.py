@@ -11,7 +11,8 @@ from . import models
 class RootService(APIView):
 	def get(self, request, format=None):
 		data={}
-		data['tracks_url'] = request.build_absolute_uri(reverse('tracks.list'))
+		data['track_url'] = request.build_absolute_uri(reverse('track.list'))
+		data['album_url'] = request.build_absolute_uri(reverse('album.list'))
 		return Response(data)
 
 class TrackDetail(APIView):
@@ -25,6 +26,24 @@ class TrackDetail(APIView):
 	def get(self, request, pk, format=None):
 		obj = self.get_object(pk)
 		serializer = serializers.Track(obj,context={'request':request})
+		return Response(serializer.data)
+
+	def delete(self, request, pk, format=None):
+		obj = self.get_object(pk)
+		del obj
+		return Response(status=status.HTTP_200_OK)
+
+class AlbumDetail(APIView):
+	
+	def get_object(self, pk):
+		try:
+			return models.Album.objects.get(pk=pk)
+		except models.Album.DoesNotExist:
+			raise Http404
+
+	def get(self, request, pk, format=None):
+		obj = self.get_object(pk)
+		serializer = serializers.Album(obj,context={'request':request})
 		return Response(serializer.data)
 
 	def delete(self, request, pk, format=None):
@@ -52,3 +71,10 @@ class TrackList(APIView):
 			
 		serializer = serializers.Track(tracks,many=True,)
 		return Response(serializer.data,status=status.HTTP_201_CREATED)
+
+class AlbumList(APIView):
+	def get(self, request, format=None):
+		objs = models.Album.objects.all()
+		serializer = serializers.Album(objs, many=True,context={'request':request})
+		return Response(serializer.data)
+		
