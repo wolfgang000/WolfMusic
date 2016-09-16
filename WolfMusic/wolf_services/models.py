@@ -64,9 +64,13 @@ class Track(models.Model):
 		self.setFieldFromTags(song.tags,'ARTIST','artist')
 		self.setFieldFromTags(song.tags,'GENRE','genre')
 		file = File(self.file.path)
-		if file.tags != None and file.tags.get('APIC:') != None:
-			artwork = file.tags['APIC:'].data 
-			self.artwork.save('art.jpg',ContentFile(artwork))
+		if file.tags != None:
+			for tag in file.tags:
+				if tag.startswith("APIC"):
+					artwork = file.tags[tag].data
+					self.artwork.save('art.jpg',ContentFile(artwork))
+					break
+
 		fileName, fileExtension = os.path.splitext(self.file.name)
 		if(fileExtension == '.mp3'):
 			self.type = self.TYPE_MP3

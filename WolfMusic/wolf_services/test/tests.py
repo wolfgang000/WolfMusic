@@ -28,7 +28,6 @@ class TrackViewTests(TestCase):
 		response = self.client.post(reverse('track.list'),data,format='multipart')
 		self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
-
 class AlbumViewTests(TestCase):
 	def setUp(self):
 		self.client =  APIClient()
