@@ -37,14 +37,16 @@ class AlbumViewTests(TestCase):
 		auxFile = open(path,'rb')
 		file = File(auxFile)
 		track1 = models.Track()
-		track1.file.save('track1.pm3',file)
-		track1.name = 'track1.pm3'
+		track1.file.save('track1.mp3',file)
+		track1.name = 'track1.mp3'
 		track1.save()
 		track1.updateMetadataSave()
 		
 		path = os.path.join(BASE_DIR, 'resource/mp3/fake_album/track2.mp3')
-		file = File(open(path))
-		track2 = models.Track(file = file,name = 'track2.mp3')
+		file = File(open(path,'rb'))
+		track2 = models.Track()
+		track2.file.save('track2.mp3',file)
+		track2.name = 'track1.mp3'
 		track2.save()
 		track2.updateMetadataSave()
 		
