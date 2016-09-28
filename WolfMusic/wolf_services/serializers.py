@@ -20,7 +20,7 @@ class Track(serializers.ModelSerializer,BaseClass):
 			if request is not None:
 				return AlbumSummary(obj.album,context={'request':request}).data
 			else:
-				return AlbumSummary(album).data
+				return AlbumSummary(obj.album).data
 		else :
 			return None
 	
