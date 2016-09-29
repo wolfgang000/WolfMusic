@@ -12,14 +12,27 @@ function makeIterator(array,startAt){
     }
 }
 
-var a =[1,2,3,4,5,6]
-iterator = makeIterator(a);
-for(it = iterator.next() ; !it.done; it = iterator.next() ){
-  console.log(it)
- 
-}
+var currentContext = {
+	tracks:[],
+	iterator:{},
+	it:{},
+	play :  function (index){
+			if(index == null) {
+				index = 0;
+			}
+			this.iterator = makeIterator(this.tracks,index);
+			this.playNext();
+		},
+		
+	
+	playNext : function (){
+			this.it = this.iterator.next();
+			if(!this.it.done){
+				setPlayerSource(this.it.value)
+			}
+		} 
+};
 
-var currentContext;
 
 
 
@@ -35,14 +48,11 @@ var loadPlayer  = function() {
 	});
 }
 
-var setPlayerSource = function(idDataObject){
+var setPlayerSource = function(dataObject){
 	var divPlayer = document.getElementById("divPlayer");
 	var divArtwork = document.getElementById("divArtwork");
 	var player = divPlayer.getElementsByTagName("audio")[0];
 	var image = divArtwork.getElementsByTagName("img")[0];
-	
-	dataObject = $('#'+idDataObject).data();
-	console.log(dataObject);
 	
 	image.src = dataObject.artwork;
 	player.innerHTML = "";
@@ -52,6 +62,9 @@ var setPlayerSource = function(idDataObject){
 	player.appendChild(src);
 	player.load();
 	player.play();
+	player.addEventListener("ended", function(){
+		currentContext.playNext();
+	});
 };
 
 var setUploadFileForm  = function() {
@@ -76,6 +89,7 @@ var loadList = function() {
 		url: url.track,
 		success: function(data) {
 			console.log(data);
+			currentContext.tracks = data;
 			list = document.getElementById("list");
 			list.innerHTML = "";
 			data.forEach(
@@ -83,20 +97,17 @@ var loadList = function() {
 					var divId = "divTrack"+index;
 					var div = document.createElement("div");
 					div.setAttribute("id",divId);
-					$(div).data(item)
-					console.log($(div).data());
 					
 					var lable = document.createElement("lable");
 					lable.innerHTML = item.title;
 					var btn = document.createElement("button");
 					btn.innerHTML = "Select";
-					btn.onclick = function() {setPlayerSource(divId)};
-					
-					
+					btn.onclick = function() {currentContext.play(index)};
+										
 					div.appendChild(lable)
 					div.appendChild(btn);
 					div.appendChild(document.createElement("br"));
-					
+
 					list.appendChild(div);
 				}
 			)
