@@ -1,3 +1,28 @@
+function makeIterator(array,startAt){
+    var nextIndex = 0;
+    if(startAt != null){
+      nextIndex=startAt;
+    }
+    return {
+       next: function(){
+           return nextIndex < array.length ?
+               {value: array[nextIndex++], done: false} :
+               {done: true};
+       }
+    }
+}
+
+var a =[1,2,3,4,5,6]
+iterator = makeIterator(a);
+for(it = iterator.next() ; !it.done; it = iterator.next() ){
+  console.log(it)
+ 
+}
+
+var currentContext;
+
+
+
 var loadPlayer  = function() {
 	$("<link/>", {
 		rel: "stylesheet",
