@@ -101,8 +101,9 @@ var setPlayerSource = function(dataObject){
 	player.appendChild(src);
 	player.load();
 	player.play();
-	player.addEventListener("ended", function(){
+	$(player).bind("ended", function(){
 		currentContext.playNext();
+		$(player).unbind( "ended");
 	});
 };
 
