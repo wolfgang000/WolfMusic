@@ -158,15 +158,22 @@ var loadList = function() {
 							
 							track = document.createElement("li");
 							$(track).hover(function(){
-								$(this).css("background-color", "blue");
+								$(this).css("background-color", "#0066ff");
+								$(this).find("font").css("color", "white");
+								$(this).find("i").css("visibility", "visible");
+								$(this).find("i").css("color", "white");
 								}, function(){
 								$(this).css("background-color", "transparent");
+								$(this).find("font").css("color", "black");
+								$(this).find("i").css("visibility", "hidden");
+								$(this).find("i").css("color", "black");
 							});
 							track.style = "margin-bottom:3px";
 							icon = document.createElement("i");
-							icon.setAttribute("class","fa fa-play-circle");
+							icon.setAttribute("class","fa fa-play-circle fa-lg");
 							icon.setAttribute("aria-hidden", "true");
-							icon.style = "margin-right:4px;visibility:hidden;";
+							icon.style = "margin-left:4px;margin-right:4px;margin-bottom:4px;visibility:hidden;";
+							
 							var auxIndex = globalIndex;
 							icon.onclick = function() {currentContext.play(auxIndex)};
 							
