@@ -6,7 +6,7 @@ function makeIterator(array,startAt){
     return {
        next: function(){
            return nextIndex < array.length ?
-               {value: array[nextIndex++], done: false} :
+           {value: array[nextIndex++], index:nextIndex-1, done: false} :
                {done: true};
        }
     }
@@ -16,6 +16,7 @@ var currentContext = {
 	tracks:[],
 	iterator:{},
 	it:{},
+	currentTrack:-1,
 	setTracksFromAlbum : function (albums){
 		this.tracks=[];
 		albums.forEach(
@@ -48,6 +49,36 @@ var currentContext = {
 	
 	playNext : function (){
 			this.it = this.iterator.next();
+			
+			if(this.currentTrack != -1) {
+				$('#'+this.currentTrack.toString()).css("background-color", "transparent");
+				$('#'+this.currentTrack.toString()).find("font").css("color", "black");
+				$('#'+this.currentTrack.toString()).find("i").css("visibility", "hidden");
+				$('#'+this.currentTrack.toString()).css("background-color", "transparent");
+				$('#'+this.currentTrack.toString()).css("color", "black");
+				
+				$('#'+this.currentTrack.toString()).hover(function(){
+					$(this).css("background-color", "#0066ff");
+					$(this).find("font").css("color", "white");
+					$(this).find("i").css("visibility", "visible");
+					$(this).find("i").css("color", "white");
+				}, function(){
+					$(this).css("background-color", "transparent");
+					$(this).find("font").css("color", "black");
+					$(this).find("i").css("visibility", "hidden");
+					$(this).find("i").css("color", "black");
+				});
+			}
+			
+			this.currentTrack=this.it.index;
+			
+			$('#'+this.it.index.toString()).off( "mouseenter mouseleave" );
+			$('#'+this.it.index.toString()).css("background-color", "#0066ff");
+			$('#'+this.it.index.toString()).find("font").css("color", "white");
+			$('#'+this.it.index.toString()).find("i").css("visibility", "visible");
+			$('#'+this.it.index.toString()).find("i").css("color", "white");
+			
+			
 			if(!this.it.done){
 				this.getResourse(this.it.value).then(
 					function(response) {
@@ -155,8 +186,10 @@ var loadList = function() {
 										
 					item.tracks.forEach(
 						function (item, index) {
+							var auxIndex = globalIndex;
 							
 							track = document.createElement("li");
+							track.id = auxIndex;
 							$(track).hover(function(){
 								$(this).css("background-color", "#0066ff");
 								$(this).find("font").css("color", "white");
@@ -174,7 +207,7 @@ var loadList = function() {
 							icon.setAttribute("aria-hidden", "true");
 							icon.style = "margin-left:4px;margin-right:4px;margin-bottom:4px;visibility:hidden;";
 							
-							var auxIndex = globalIndex;
+							
 							icon.onclick = function() {currentContext.play(auxIndex)};
 							
 							font = document.createElement("font");
