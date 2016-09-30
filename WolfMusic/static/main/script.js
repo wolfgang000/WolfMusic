@@ -31,14 +31,8 @@ var currentContext = {
 			if(index == null) {
 				index = 0;
 			}
-			console.log("play")
-			console.log(index)
 			this.iterator = makeIterator(this.tracks,index);
-			console.log(this.tracks)
-			console.log(this.iterator)
-			console.log("pre")
 			this.playNext();
-			console.log("prost")
 		},
 	
 	getResourse : 
@@ -53,25 +47,19 @@ var currentContext = {
 		},
 	
 	playNext : function (){
-		console.log("en play")
 			this.it = this.iterator.next();
-			console.log(this.it)
 			if(!this.it.done){
-				console.log("pre get")
 				this.getResourse(this.it.value).then(
 					function(response) {
-						console.log("success")
 						setPlayerSource(response)
 					},
 					function(error) {
 						 console.error("Failed!", error);
 					}
 				);
-				console.log("post get")
 			}
 		} 
 };
-
 
 
 
@@ -135,26 +123,71 @@ var loadList = function() {
 			globalIndex=0;
 			data.forEach(
 				function (item, index) {
+					var album = document.createElement("div");
+					album.style = "margin-bottom:30px;";
+					divArtwork = document.createElement("div");
+					divArtwork.style = "height:142px; width:142px; display:inline-block;";
+					artwork = document.createElement("img");
+					artwork.style = "width:140px;height:140px;";
+					artwork.src = item.artwork;
+					divArtwork.appendChild(artwork);
+					
+					divContent =  document.createElement("div");
+					divContent.style = "display:inline-block; vertical-align:top;";
+					
+					albumTitle = document.createElement("font");
+					albumTitle.size = 6 ;
+					albumTitle.innerHTML = item.name;
+					divContent.appendChild(albumTitle);
+					divContent.appendChild(document.createElement("br"));
+					
+					albumArtist = document.createElement("font");
+					albumArtist.size = 3 ;
+					albumArtist.innerHTML = item.name;
+					divContent.appendChild(albumArtist);
+					divContent.appendChild(document.createElement("br"));
+					
+					tracksDiv = document.createElement("div");
+					tracksDiv.style = "list-style-type:none;margin: 0; padding: 0;margin-top:80px";
+					
+					tracks = document.createElement("ul");
+					tracks.style = "list-style-type:none;margin: 0; padding: 0;";
+										
 					item.tracks.forEach(
 						function (item, index) {
-							var divId = "divTrack"+index;
-							var div = document.createElement("div");
-							div.setAttribute("id",divId);
 							
-							var lable = document.createElement("lable");
-							lable.innerHTML = item.title;
-							var btn = document.createElement("button");
-							btn.innerHTML = "Select";
-							console.log(globalIndex)
+							track = document.createElement("li");
+							$(track).hover(function(){
+								$(this).css("background-color", "blue");
+								}, function(){
+								$(this).css("background-color", "transparent");
+							});
+							track.style = "margin-bottom:3px";
+							icon = document.createElement("i");
+							icon.setAttribute("class","fa fa-play-circle");
+							icon.setAttribute("aria-hidden", "true");
+							icon.style = "margin-right:4px;visibility:hidden;";
 							var auxIndex = globalIndex;
-							btn.onclick = function() {currentContext.play(auxIndex)};
-												
-							div.appendChild(lable)
-							div.appendChild(btn);
-							div.appendChild(document.createElement("br"));
-							list.appendChild(div);
+							icon.onclick = function() {currentContext.play(auxIndex)};
+							
+							font = document.createElement("font");
+							font.size = 4;
+							font.innerHTML = item.title;
+							
+							track.appendChild(icon);
+							track.appendChild(font);
+							tracks.appendChild(track);
+							
 							globalIndex++;
 						});
+					
+					tracksDiv.appendChild(tracks);
+					divContent.appendChild(tracksDiv);
+					
+					album.appendChild(divArtwork);
+					album.appendChild(divContent);
+					
+					list.appendChild(album);
 				}
 			)
 		}
