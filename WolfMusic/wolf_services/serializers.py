@@ -44,10 +44,12 @@ class Album(serializers.ModelSerializer,BaseClass):
 	def _get_artwork(self, obj):
 		track = models.Track.objects.filter(album = obj)[0]
 		request = self.context.get('request', None)
-		if request is not None:
-			return request.build_absolute_uri(track.artwork.url) 
-		else:
-			return track.artwork.url
+		if(track.artwork):
+			if request is not None:
+				return request.build_absolute_uri(track.artwork.url) 
+			else:
+				return track.artwork.url
+		return None
 	
 	def _get_tracks(self, obj):
 		tracks = models.Track.objects.filter(album = obj)
