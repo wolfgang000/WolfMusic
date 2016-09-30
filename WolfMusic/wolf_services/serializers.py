@@ -40,6 +40,13 @@ class Album(serializers.ModelSerializer,BaseClass):
 	url = serializers.SerializerMethodField('get_full_url', read_only=True)
 	tracks = serializers.SerializerMethodField('_get_tracks', read_only=True)
 	artwork = serializers.SerializerMethodField('_get_artwork', read_only=True)
+	artist = serializers.SerializerMethodField('_get_artist', read_only=True)
+	
+	def _get_artist(self, obj):
+		track = models.Track.objects.filter(album = obj)[0]
+		if(track.artist):
+			return track.artist
+		return None
 	
 	def _get_artwork(self, obj):
 		track = models.Track.objects.filter(album = obj)[0]
@@ -61,8 +68,8 @@ class Album(serializers.ModelSerializer,BaseClass):
 	
 	class Meta:
 		model = models.Track
-		fields = ('url','id','name','artwork','tracks')
-		read_only_fields = ('url','id','name','artwork','tracks')
+		fields = ('url','id','name','artwork','artist','tracks')
+		read_only_fields = ('url','id','name','artwork','artist','tracks')
 
 class AlbumSummary(serializers.ModelSerializer,BaseClass):
 	url = serializers.SerializerMethodField('get_full_url', read_only=True)

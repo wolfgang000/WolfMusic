@@ -174,7 +174,7 @@ var loadList = function() {
 					
 					albumArtist = document.createElement("font");
 					albumArtist.size = 3 ;
-					albumArtist.innerHTML = item.name;
+					albumArtist.innerHTML = item.artist;
 					divContent.appendChild(albumArtist);
 					divContent.appendChild(document.createElement("br"));
 					
