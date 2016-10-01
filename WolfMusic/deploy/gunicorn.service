@@ -1,0 +1,13 @@
+[Unit]
+Description=gunicorn daemon
+After=network.target
+
+
+[Service]
+User=wolfgang
+Group=www-data
+WorkingDirectory=/home/wolfgang/git_repo/WolfMusic/WolfMusic
+ExecStart=/home/wolfgang/.pyenv/versions/wolf_music/bin/gunicorn --workers 3 --bind unix:/home/wolfgang/git_repo/WolfMusic/WolfMusic/WolfMusic.sock WolfMusic.wsgi:application
+
+[Install]
+WantedBy=multi-user.target

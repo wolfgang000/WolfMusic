@@ -1,0 +1,23 @@
+server {
+    listen 8080;
+     server_name 0.0.0.0;   
+
+    location = /favicon.ico { access_log off; log_not_found off; }
+
+    location /static/ {
+        autoindex on;
+        alias /home/wolfgang/git_repo/WolfMusic/WolfMusic/static_project/;
+    }
+
+    location /media/ {
+        autoindex on;
+        alias /home/wolfgang/git_repo/WolfMusic/WolfMusic/media/;
+    }
+
+    location / {
+        include proxy_params;
+        client_max_body_size 50m;
+        proxy_pass http://unix:/home/wolfgang/git_repo/WolfMusic/WolfMusic/WolfMusic.sock;
+    }
+
+}
