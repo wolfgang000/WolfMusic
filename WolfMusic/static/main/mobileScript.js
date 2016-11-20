@@ -15,10 +15,25 @@ var currentContext = {
 					},this);
 			},this);
 	},
+	setTracks : function (tracks){
+		tracks.forEach(
+			function (item, index) {
+				this.tracks.push({ url : item.url, id :  item.id});
+			},this);
+	},
 	play :  function (index){
 		if(index == null) {
 			index = 0;
 		}
+		this.iterator = makeIterator(this.tracks,index);
+		this.playNext();
+	},	
+	
+	playById :  function (id){
+		index = this.tracks.findIndex(function (d) {
+			return d.id == id;
+		});
+		
 		this.iterator = makeIterator(this.tracks,index);
 		this.playNext();
 	},
@@ -35,40 +50,18 @@ var currentContext = {
 	
 	playNext : function (){
 		this.it = this.iterator.next();
-		
-		if(this.currentTrack != -1) {
-			$('#'+this.currentTrack.toString()).css("background-color", "transparent");
-			$('#'+this.currentTrack.toString()).find("font").css("color", "black");
-			$('#'+this.currentTrack.toString()).find("i").css("visibility", "hidden");
-			$('#'+this.currentTrack.toString()).css("background-color", "transparent");
-			$('#'+this.currentTrack.toString()).css("color", "black");
-			
-			$('#'+this.currentTrack.toString()).hover(function(){
-				$(this).css("background-color", "#0066ff");
-				$(this).find("font").css("color", "white");
-				$(this).find("i").css("visibility", "visible");
-				$(this).find("i").css("color", "white");
-			}, function(){
-				$(this).css("background-color", "transparent");
-				$(this).find("font").css("color", "black");
-				$(this).find("i").css("visibility", "hidden");
-				$(this).find("i").css("color", "black");
-			});
-		}
-		
+				
 		this.currentTrack=this.it.index;
 		
-		$('#'+this.it.index.toString()).off( "mouseenter mouseleave" );
-		$('#'+this.it.index.toString()).css("background-color", "#0066ff");
-		$('#'+this.it.index.toString()).find("font").css("color", "white");
-		$('#'+this.it.index.toString()).find("i").css("visibility", "visible");
-		$('#'+this.it.index.toString()).find("i").css("color", "white");
-		
-		
 		if(!this.it.done){
-			this.getResourse(this.it.value).then(
+			this.getResourse(this.it.value.url).then(
 				function(response) {
-					setPlayerSource(response)
+					playerDOM.setPlayerSource(response);
+					$(playerDOM.audioTag).bind("ended", function(){
+						console.log("NewSong")
+						currentContext.playNext();
+						$(playerDOM.audioTag).unbind("ended");
+					});
 				},
 				function(error) {
 					console.error("Failed!", error);
@@ -93,26 +86,6 @@ var loadPlayer  = function() {
 		playerDOM.init();
 	});
 }
-
-var setPlayerSource = function(dataObject){
-	var divPlayer = document.getElementById("divPlayer");
-	var divArtwork = document.getElementById("divArtwork");
-	var player = divPlayer.getElementsByTagName("audio")[0];
-	var image = divArtwork.getElementsByTagName("img")[0];
-	
-	image.src = dataObject.artwork;
-	player.innerHTML = "";
-	var src = document.createElement("source");
-	src.src = dataObject.file.replace('"','');
-	src.type = dataObject.type;
-	player.appendChild(src);
-	player.load();
-	player.play();
-	$(player).bind("ended", function(){
-		currentContext.playNext();
-		$(player).unbind( "ended");
-	});
-};
 
 var setUploadFileForm  = function() {
 	
@@ -229,7 +202,7 @@ var makeTrackList = function(tracks) {
 		function (item, index) {
 			var track = htmlToElement('<a href="#" class="list-group-item"></a>');
 			track.id = "track"+item.id;
-			track.onclick = function() {currentContext.play(item.id)};
+			track.href = "#tracks/"+item.id;
 			track.innerHTML = item.title;
 			divList.appendChild(track);
 		});
@@ -294,18 +267,18 @@ $(window).on('hashchange', function(){
 
 function render(url) {
 	var urlBase = url.split('/')[0];
-	document.getElementById('content').style.display = "none";
-	document.getElementById('tracklist').style.display = "none";
 	
 	var map = {
 		'': function() {
+			document.getElementById('content').style.display = "none";
+			document.getElementById('tracklist').style.display = "none";
 			var albums = makeAlbumList(globalAlbums);
 			updateContent(albums,"content");
 		},
 		'#albums': function() {
+			document.getElementById('content').style.display = "none";
+			document.getElementById('tracklist').style.display = "none";
 			var path = url.split('/');
-			//var index = url.split('#albums/')[1].trim();
-			console.log(path)
 			if(path[1] == ""){
 				var albums = makeAlbumList(globalAlbums);
 				updateContent(albums,"content");
@@ -315,10 +288,14 @@ function render(url) {
 					return d.id == index;
 				});
 				var tracklist = makeTrackList(album.tracks);
-				var tracklistDiv = document.getElementById('tracklist');
+				currentContext.setTracks(album.tracks);
 				updateContent(tracklist,"tracklist")
 			}
 			
+		},'#tracks': function() {
+			var path = url.split('/');
+			var index = path[1].trim();
+			currentContext.playById(index)
 		}
 	}
 	if(map[urlBase]){
@@ -343,6 +320,30 @@ var playerDOM =  {
 			this.audioTag.pause();
 			$(this.playerView.playButton).toggleClass("fa-pause fa-play");
 		}
+	},
+	play :function () {
+		this.audioTag.play();
+		$(this.playerView.playButton).toggleClass("fa-pause fa-play");
+	},
+	setPlayIcon : function () {
+		$(this.playerView.playButton).toggleClass("fa-play fa-pause");
+	},
+	pause :function () {
+		this.audioTag.pause();
+		$(this.playerView.playButton).toggleClass("fa-play fa-pause");
+	},
+	
+	setPlayerSource : function(dataObject){
+		var divPlayer = document.getElementById("divPlayer");
+		this.audioTag.innerHTML = "";
+		var src = document.createElement("source");
+		src.src = dataObject.file.replace('"','');
+		src.type = dataObject.type;
+		this.audioTag.appendChild(src);
+		//this.audioTag.setAttribute("autoplay","");
+		//this.setPlayIcon();
+		this.audioTag.load();
+		this.play();
 	},
 	init : function () {
 		this.audioTag =  document.getElementById("player");
