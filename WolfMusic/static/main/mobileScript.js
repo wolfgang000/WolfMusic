@@ -83,12 +83,14 @@ var currentContext = {
 var loadPlayer  = function() {
 	$("<link/>", {
 		rel: "stylesheet",
-   type: "text/css",
-   href:  staticDomain + "player/style.css"
+		type: "text/css",
+		href:  staticDomain + "player/style.css"
 	}).appendTo("head");
+	
 	var body = document.getElementsByTagName("BODY")[0];
-	$.get(staticDomain + "player/player.html", function(data, status){
+	$.get(staticDomain + "player/mobilePlayerBar.html", function(data, status){
 		document.body.innerHTML += data;
+		playerDOM.init();
 	});
 }
 
@@ -324,9 +326,30 @@ function render(url) {
 	}
 };
 
-function renderTracklist(index, data){
-	// Shows the Single Product Page with appropriate data.
-}
+var playerDOM =  {
+	playerView : {
+		playButton : {},
+		init : function () {
+			var children = document.getElementById('playerView');
+			this.playButton = children.getElementsByClassName('play-button')[0]
+		}
+	},
+	audioTag :{},
+	play_pause :function () {
+		if (this.audioTag.paused) {
+			this.audioTag.play();
+			$(this.playerView.playButton).toggleClass("fa-play fa-pause");
+		} else {
+			this.audioTag.pause();
+			$(this.playerView.playButton).toggleClass("fa-pause fa-play");
+		}
+	},
+	init : function () {
+		this.audioTag =  document.getElementById("player");
+		this.playerView.init();
+	}
+};
+
 
 $(document).ready(function() {
 	loadRootUrls();
