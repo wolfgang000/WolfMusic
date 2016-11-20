@@ -266,7 +266,8 @@ var updateContent = function(newContent,divId) {
 		});
 	} else {
 		oldContent.appendChild(newContent);
-	}	
+	}
+	oldContent.style.display = "initial";
 };
 
 var globalAlbums = {};
@@ -276,8 +277,7 @@ var getAlbums = function(newContent) {
 		url: url.album,
 		success: function(data) {
 			globalAlbums = data;
-			var albums = makeAlbumList(data);
-			updateContent(albums,"content");
+			$(window).trigger('hashchange');
 		}
 	})
 };
@@ -293,22 +293,29 @@ $(window).on('hashchange', function(){
 function render(url) {
 	var urlBase = url.split('/')[0];
 	document.getElementById('content').style.display = "none";
+	document.getElementById('tracklist').style.display = "none";
+	
 	var map = {
 		'': function() {
-			
+			var albums = makeAlbumList(globalAlbums);
+			updateContent(albums,"content");
 		},
 		'#albums': function() {
-			var index = url.split('#albums/')[1].trim();
-			console.log(index)
-			console.log(globalAlbums);
-			album = globalAlbums.find(function (d) {
-				return d.id == index;
-			});
-			var tracklist = makeTrackList(album.tracks);
-			var tracklistDiv = document.getElementById('tracklist');
-			tracklistDiv.style.display = "initial";
-			
-			updateContent(tracklist,"tracklist")
+			var path = url.split('/');
+			//var index = url.split('#albums/')[1].trim();
+			console.log(path)
+			if(path[1] == ""){
+				var albums = makeAlbumList(globalAlbums);
+				updateContent(albums,"content");
+			} else {
+				var index = path[1].trim();
+				album = globalAlbums.find(function (d) {
+					return d.id == index;
+				});
+				var tracklist = makeTrackList(album.tracks);
+				var tracklistDiv = document.getElementById('tracklist');
+				updateContent(tracklist,"tracklist")
+			}
 			
 		}
 	}
