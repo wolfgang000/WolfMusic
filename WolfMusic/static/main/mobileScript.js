@@ -49,16 +49,24 @@ var currentContext = {
 	},
 	
 	playNext : function (){
+		
+		if(this.it.value != null) {
+			if(document.getElementById('track'+this.it.value.id) != null) {
+				$('#'+'track'+this.it.value.id).removeClass("active");
+			}
+		}
+		
 		this.it = this.iterator.next();
-				
-		this.currentTrack=this.it.index;
+		var trackId = this.it.value.id;
 		
 		if(!this.it.done){
 			this.getResourse(this.it.value.url).then(
 				function(response) {
 					playerDOM.setPlayerSource(response);
+					if(document.getElementById('track'+trackId) != null) {
+						$('#'+'track'+ trackId).addClass("active");
+					}
 					$(playerDOM.audioTag).bind("ended", function(){
-						console.log("NewSong")
 						currentContext.playNext();
 						$(playerDOM.audioTag).unbind("ended");
 					});
@@ -200,9 +208,9 @@ var makeTrackList = function(tracks) {
 	var divList = htmlToElement('<div class="list-group"></div>');
 	tracks.forEach(
 		function (item, index) {
-			var track = htmlToElement('<a href="#" class="list-group-item"></a>');
+			var track = htmlToElement('<button class="list-group-item list-group-item-action"></button>');
 			track.id = "track"+item.id;
-			track.href = "#tracks/"+item.id;
+			track.onclick = function() {currentContext.playById(item.id)};
 			track.innerHTML = item.title;
 			divList.appendChild(track);
 		});
@@ -292,10 +300,6 @@ function render(url) {
 				updateContent(tracklist,"tracklist")
 			}
 			
-		},'#tracks': function() {
-			var path = url.split('/');
-			var index = path[1].trim();
-			currentContext.playById(index)
 		}
 	}
 	if(map[urlBase]){
@@ -323,14 +327,11 @@ var playerDOM =  {
 	},
 	play :function () {
 		this.audioTag.play();
-		$(this.playerView.playButton).toggleClass("fa-pause fa-play");
-	},
-	setPlayIcon : function () {
-		$(this.playerView.playButton).toggleClass("fa-play fa-pause");
+		$(this.playerView.playButton).toggleClass("fa-play fa-pause ");
 	},
 	pause :function () {
 		this.audioTag.pause();
-		$(this.playerView.playButton).toggleClass("fa-play fa-pause");
+		$(this.playerView.playButton).toggleClass("fa-pause fa-play");
 	},
 	
 	setPlayerSource : function(dataObject){
