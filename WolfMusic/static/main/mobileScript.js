@@ -221,12 +221,12 @@ var makeAlbumList = function(albums) {
 	var divList = htmlToElement('<div class="list-group"></div>');
 	albums.forEach(
 		function (item, index) {
-			var album = htmlToElement('<a href="#" class="list-group-item" style="display: flex;"></a>');
+			var album = htmlToElement('<a href="#" class="list-group-item" style="display: flex;padding: 4px 4px !important;"></a>');
 			
 			album.appendChild(
-				htmlToElement('<div style=" display: flex;flex-direction: column;justify-content: center;"></div>')
+				htmlToElement('<div style=" display: flex;flex-direction: row; align-items:center;"></div>')
 				).appendChild(
-					$(htmlToElement('<img src="" alt="artwork" style="width:128px;height:128px;">')).attr('src',item.artwork).get(0)
+					$(htmlToElement('<img src="" alt="artwork" style="width:64px;height:64px;">')).attr('src',item.artwork).get(0)
 				).parentNode.appendChild(
 					$(htmlToElement('<font size="4" style="color: black;"></font>')).html(item.name).get(0)
 				)
