@@ -92,16 +92,6 @@ var loadPlayer  = function() {
 	$.get(staticDomain + "player/mobilePlayerBar.html", function(data, status){
 		document.body.innerHTML += data;
 		playerDOM.init();
-		$( "#slider-vertical" ).slider({
-			orientation: "vertical",
-			range: "min",
-			min: 0,
-			max: 100,
-			value: 50,
-			slide: function( event, ui ) {
-				playerDOM.audioTag.volume = ui.value / 100.0;
-			}
-		});
 	});
 	
 
@@ -325,6 +315,16 @@ var playerDOM =  {
 		init : function () {
 			var children = document.getElementById('playerView');
 			this.playButton = children.getElementsByClassName('play-button')[0]
+			$( "#slider-vertical" ).slider({
+				orientation: "vertical",
+				range: "min",
+				min: 0,
+				max: 100,
+				value: 50,
+				slide: function( event, ui ) {
+					this.audioTag.volume = ui.value / 100.0;
+				}
+			});
 		}
 	},
 	audioTag :{},
@@ -345,7 +345,14 @@ var playerDOM =  {
 		this.audioTag.pause();
 		$(this.playerView.playButton).toggleClass("fa-pause fa-play");
 	},
-	
+	show_hide_volume_slider :function () {
+		var slider = $( "#slider-vertical" );
+		if ( slider.css("display") === 'none') {
+			slider.css("display", "flex"); 
+		} else {
+			slider.css("display", "none"); 
+		}
+	},
 	setPlayerSource : function(dataObject){
 		var divPlayer = document.getElementById("divPlayer");
 		this.audioTag.innerHTML = "";
@@ -364,21 +371,9 @@ var playerDOM =  {
 	}
 };
 
-function myFunction() {
-	var slider = $( "#slider-vertical" );
-	if ( slider.css("display") === 'none') {
-		slider.css("display", "flex"); 
-	} else {
-		slider.css("display", "none"); 
-	}
-}
-
-// Close the dropdown menu if the user clicks outside of it
 window.onclick = function(event) {
 	if (!event.target.matches('.volume-button')) {
-		console.log("chxk")
 		var slider = $( "#slider-vertical" );
-		console.log(slider.css("display"))
 		if (slider.css("display") == 'flex') {
 			slider.css("display", "none"); 
 		}
