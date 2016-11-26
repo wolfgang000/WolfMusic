@@ -1,4 +1,4 @@
-<div id="divPlayer" style="display: flex;"  class="toolbar">
+<div id="divPlayer" style="display: flex;  justify-content:space-between;"  class="toolbar">
 
 	<audio id="player">
 	</audio>
@@ -6,5 +6,9 @@
 	<div id="playerView" style="display: flex; align-items:center;">
 		<i class="fa fa- fa-play fa-3x play-button" style="display : flex; flex-direction : column; justify-content : center;padding:5px;" aria-hidden="true" onclick="playerDOM.play_pause()"></i>
 	</div>
+	<div style="display: flex;  flex-direction: row-reverse; ">
+		<i class="fa fa-volume-up fa-3x volume-button" style="display : flex; flex-direction : column; justify-content : center;padding:5px;" aria-hidden="true"  onclick="myFunction()"></i>
+		
+		<div id="slider-vertical"  style="height:100%; display : flex; position: relative;bottom:120%;left:50%;"></div>
+	</div>
 </div>
-

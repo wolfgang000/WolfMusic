@@ -92,7 +92,19 @@ var loadPlayer  = function() {
 	$.get(staticDomain + "player/mobilePlayerBar.html", function(data, status){
 		document.body.innerHTML += data;
 		playerDOM.init();
+		$( "#slider-vertical" ).slider({
+			orientation: "vertical",
+			range: "min",
+			min: 0,
+			max: 100,
+			value: 50,
+			slide: function( event, ui ) {
+				playerDOM.audioTag.volume = ui.value / 100.0;
+			}
+		});
 	});
+	
+
 }
 
 var setUploadFileForm  = function() {
@@ -352,6 +364,26 @@ var playerDOM =  {
 	}
 };
 
+function myFunction() {
+	var slider = $( "#slider-vertical" );
+	if ( slider.css("display") === 'none') {
+		slider.css("display", "flex"); 
+	} else {
+		slider.css("display", "none"); 
+	}
+}
+
+// Close the dropdown menu if the user clicks outside of it
+window.onclick = function(event) {
+	if (!event.target.matches('.volume-button')) {
+		console.log("chxk")
+		var slider = $( "#slider-vertical" );
+		console.log(slider.css("display"))
+		if (slider.css("display") == 'flex') {
+			slider.css("display", "none"); 
+		}
+	}
+}
 
 $(document).ready(function() {
 	loadRootUrls();
