@@ -6,20 +6,91 @@ function makeIterator(array,startAt){
     return {
        next: function(){
            return nextIndex < array.length ?
-               {value: array[nextIndex++], done: false} :
+           {value: array[nextIndex++], index:nextIndex-1, done: false} :
                {done: true};
        }
     }
 }
 
-var a =[1,2,3,4,5,6]
-iterator = makeIterator(a);
-for(it = iterator.next() ; !it.done; it = iterator.next() ){
-  console.log(it)
- 
-}
-
-var currentContext;
+var currentContext = {
+	tracks:[],
+	iterator:{},
+	it:{},
+	currentTrack:-1,
+	setTracksFromAlbum : function (albums){
+		this.tracks=[];
+		albums.forEach(
+			function (item, index) {
+				item.tracks.forEach(
+					function (item, index) {
+						console.log(this.tracks)
+						this.tracks.push(item.url);
+					},this);
+			},this);
+	},
+	play :  function (index){
+			if(index == null) {
+				index = 0;
+			}
+			this.iterator = makeIterator(this.tracks,index);
+			this.playNext();
+		},
+	
+	getResourse : 
+		function(url) {
+			return Promise.resolve(
+				$.ajax({
+					url: url,
+					tryCount : 0,
+					retryLimit : 3
+				})
+			);
+		},
+	
+	playNext : function (){
+			this.it = this.iterator.next();
+			
+			if(this.currentTrack != -1) {
+				$('#'+this.currentTrack.toString()).css("background-color", "transparent");
+				$('#'+this.currentTrack.toString()).find("font").css("color", "black");
+				$('#'+this.currentTrack.toString()).find("i").css("visibility", "hidden");
+				$('#'+this.currentTrack.toString()).css("background-color", "transparent");
+				$('#'+this.currentTrack.toString()).css("color", "black");
+				
+				$('#'+this.currentTrack.toString()).hover(function(){
+					$(this).css("background-color", "#0066ff");
+					$(this).find("font").css("color", "white");
+					$(this).find("i").css("visibility", "visible");
+					$(this).find("i").css("color", "white");
+				}, function(){
+					$(this).css("background-color", "transparent");
+					$(this).find("font").css("color", "black");
+					$(this).find("i").css("visibility", "hidden");
+					$(this).find("i").css("color", "black");
+				});
+			}
+			
+			this.currentTrack=this.it.index;
+			
+			$('#'+this.it.index.toString()).off( "mouseenter mouseleave" );
+			$('#'+this.it.index.toString()).css("background-color", "#0066ff");
+			$('#'+this.it.index.toString()).find("font").css("color", "white");
+			$('#'+this.it.index.toString()).find("i").css("visibility", "visible");
+			$('#'+this.it.index.toString()).find("i").css("color", "white");
+			
+			
+			if(!this.it.done){
+				this.getResourse(this.it.value).then(
+					function(response) {
+						setPlayerSource(response)
+					},
+					function(error) {
+						 console.error("Failed!", error);
+					}
+				);
+			}
+		} 
+};
 
 
 
@@ -35,14 +106,11 @@ var loadPlayer  = function() {
 	});
 }
 
-var setPlayerSource = function(idDataObject){
+var setPlayerSource = function(dataObject){
 	var divPlayer = document.getElementById("divPlayer");
 	var divArtwork = document.getElementById("divArtwork");
 	var player = divPlayer.getElementsByTagName("audio")[0];
 	var image = divArtwork.getElementsByTagName("img")[0];
-	
-	dataObject = $('#'+idDataObject).data();
-	console.log(dataObject);
 	
 	image.src = dataObject.artwork;
 	player.innerHTML = "";
@@ -52,6 +120,10 @@ var setPlayerSource = function(idDataObject){
 	player.appendChild(src);
 	player.load();
 	player.play();
+	$(player).bind("ended", function(){
+		currentContext.playNext();
+		$(player).unbind( "ended");
+	});
 };
 
 var setUploadFileForm  = function() {
@@ -73,31 +145,89 @@ var setUploadFileForm  = function() {
 
 var loadList = function() {
 	$.ajax({
-		url: url.track,
+		url: url.album,
 		success: function(data) {
 			console.log(data);
+			currentContext.setTracksFromAlbum(data);
 			list = document.getElementById("list");
 			list.innerHTML = "";
+			globalIndex=0;
 			data.forEach(
 				function (item, index) {
-					var divId = "divTrack"+index;
-					var div = document.createElement("div");
-					div.setAttribute("id",divId);
-					$(div).data(item)
-					console.log($(div).data());
+					var album = document.createElement("div");
+					album.style = "margin-bottom:30px;";
+					divArtwork = document.createElement("div");
+					divArtwork.style = "height:142px; width:142px; display:inline-block;";
+					artwork = document.createElement("img");
+					artwork.style = "width:140px;height:140px;";
+					artwork.src = item.artwork;
+					divArtwork.appendChild(artwork);
 					
-					var lable = document.createElement("lable");
-					lable.innerHTML = item.title;
-					var btn = document.createElement("button");
-					btn.innerHTML = "Select";
-					btn.onclick = function() {setPlayerSource(divId)};
+					divContent =  document.createElement("div");
+					divContent.style = "display:inline-block; vertical-align:top;";
 					
+					albumTitle = document.createElement("font");
+					albumTitle.size = 6 ;
+					albumTitle.innerHTML = item.name;
+					divContent.appendChild(albumTitle);
+					divContent.appendChild(document.createElement("br"));
 					
-					div.appendChild(lable)
-					div.appendChild(btn);
-					div.appendChild(document.createElement("br"));
+					albumArtist = document.createElement("font");
+					albumArtist.size = 3 ;
+					albumArtist.innerHTML = item.artist;
+					divContent.appendChild(albumArtist);
+					divContent.appendChild(document.createElement("br"));
 					
-					list.appendChild(div);
+					tracksDiv = document.createElement("div");
+					tracksDiv.style = "list-style-type:none;margin: 0; padding: 0;margin-top:80px";
+					
+					tracks = document.createElement("ul");
+					tracks.style = "list-style-type:none;margin: 0; padding: 0;";
+										
+					item.tracks.forEach(
+						function (item, index) {
+							var auxIndex = globalIndex;
+							
+							track = document.createElement("li");
+							track.id = auxIndex;
+							$(track).hover(function(){
+								$(this).css("background-color", "#0066ff");
+								$(this).find("font").css("color", "white");
+								$(this).find("i").css("visibility", "visible");
+								$(this).find("i").css("color", "white");
+								}, function(){
+								$(this).css("background-color", "transparent");
+								$(this).find("font").css("color", "black");
+								$(this).find("i").css("visibility", "hidden");
+								$(this).find("i").css("color", "black");
+							});
+							track.style = "margin-bottom:3px";
+							icon = document.createElement("i");
+							icon.setAttribute("class","fa fa-play-circle fa-lg");
+							icon.setAttribute("aria-hidden", "true");
+							icon.style = "margin-left:4px;margin-right:4px;margin-bottom:4px;visibility:hidden;";
+							
+							
+							icon.onclick = function() {currentContext.play(auxIndex)};
+							
+							font = document.createElement("font");
+							font.size = 4;
+							font.innerHTML = item.title;
+							
+							track.appendChild(icon);
+							track.appendChild(font);
+							tracks.appendChild(track);
+							
+							globalIndex++;
+						});
+					
+					tracksDiv.appendChild(tracks);
+					divContent.appendChild(tracksDiv);
+					
+					album.appendChild(divArtwork);
+					album.appendChild(divContent);
+					
+					list.appendChild(album);
 				}
 			)
 		}
