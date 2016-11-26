@@ -330,11 +330,11 @@ var playerDOM =  {
 	audioTag :{},
 	play_pause :function () {
 		if (this.audioTag.paused) {
-			this.audioTag.play();
-			$(this.playerView.playButton).toggleClass("fa-play fa-pause");
+			if(this.audioTag.readyState == 4){
+				this.play();
+			}
 		} else {
-			this.audioTag.pause();
-			$(this.playerView.playButton).toggleClass("fa-pause fa-play");
+			this.pause();
 		}
 	},
 	play :function () {
