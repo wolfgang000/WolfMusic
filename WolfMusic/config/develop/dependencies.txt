@@ -1,0 +1,26 @@
+Python:
+	pyenv:
+		https://github.com/yyuu/pyenv
+		https://github.com/yyuu/pyenv-virtualenv 
+		sudo apt-get install -y make build-essential libssl-dev zlib1g-dev libbz2-dev \
+		libreadline-dev libsqlite3-dev wget curl llvm libncurses5-dev libncursesw5-dev xz-utils
+
+	debian python-virtualenv:
+		apt-get install python3 python-virtualenv 
+
+Firefox:
+	https://mozilla.debian.net/
+Chrome:
+	https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+
+
+Webdrivers:
+	Chrome:
+		https://chromedriver.storage.googleapis.com/index.html
+	Firefox:
+		https://github.com/mozilla/geckodriver/releases
+
+	mkdir ~/webdriver
+	echo 'export PATH=$PATH:"$HOME/webdriver' >> ~/.bashrc
+
+
