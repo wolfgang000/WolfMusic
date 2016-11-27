@@ -26,6 +26,6 @@ Webdrivers:
 		https://github.com/mozilla/geckodriver/releases
 
 	mkdir ~/webdriver
-	echo 'export PATH=$PATH:"$HOME/webdriver' >> ~/.bashrc
+	echo 'export PATH=$PATH:$HOME/webdriver' >> ~/.bashrc
 
 
