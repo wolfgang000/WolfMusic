@@ -126,9 +126,8 @@ NOSE_ARGS = [
     '--with-xunit',  # enable XUnit plugin
     '--xunit-file=xunittest.xml',  # the XUnit report file
     '--with-coverage', # coverage
-    '--cover-xml-file=coverage.xml',
+    '--cover-xml',
     '--cover-package=WolfMusic, main_site, wolf_services',
-    
 ]
 
 # Static files (CSS, JavaScript, Images)
