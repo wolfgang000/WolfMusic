@@ -3,3 +3,6 @@
 *.sqlite3
 *.pyc
 **/media/
+**/.coverage
+**/htmlcov/
+**/coverage.xml
