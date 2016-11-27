@@ -4,6 +4,7 @@ from rest_framework.parsers import FormParser, MultiPartParser
 from rest_framework import authentication, permissions
 from rest_framework import status
 from django.urls import reverse
+from django.http import Http404
 from . import serializers
 from . import models
 
