@@ -7,3 +7,4 @@
 **/htmlcov/
 **/coverage.xml
 **/xunittest.xml
+**/pylint.out
