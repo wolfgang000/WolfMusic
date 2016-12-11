@@ -322,7 +322,7 @@ var playerDOM =  {
 				max: 100,
 				value: 50,
 				slide: function( event, ui ) {
-					this.audioTag.volume = ui.value / 100.0;
+					document.getElementById("player").volume = ui.value / 100.0;
 				}
 			});
 		}
@@ -370,6 +370,7 @@ var playerDOM =  {
 		this.playerView.init();
 	}
 };
+
 
 window.onclick = function(event) {
 	if (!event.target.matches('.volume-button')) {
