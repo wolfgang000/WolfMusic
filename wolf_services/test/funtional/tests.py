@@ -24,19 +24,18 @@ class VoluneControlTest(StaticLiveServerTestCase):
 		
 	def tearDown(self):
 		self.browser.quit()
-		
-	def test_check_title(self):
-		self.browser.get(self.live_server_url + '/wolfy/mobile')
-		self.assertIn('WolfMusic', self.browser.title)
 	
 	def test_volume_up_slider(self):
 		self.browser.get(self.live_server_url + '/wolfy/mobile')
 		volume_button = self.browser.find_element_by_class_name('volume-button')
 		slider = self.browser.find_element_by_id('slider-vertical')
-		audio_tag = self.browser.find_element_by_id('player')
+		
 		self.assertFalse(slider.is_displayed())
 		volume_button.click()
 		self.assertTrue(slider.is_displayed())
 		action_chains = ActionChains(self.browser)
-		action_chains.drag_and_drop_by_offset(slider, 30,0).perform()
+		action_chains.drag_and_drop_by_offset(slider, 30, 0).perform()
+		audio_tag = self.browser.find_element_by_id('player')
+		current_volume = audio_tag.get_attribute('volume')
+		self.assertEqual(float(current_volume), 0.8)
 
