@@ -35,11 +35,12 @@ class VoluneControlTest(StaticLiveServerTestCase):
 		slider = self.browser.find_element_by_id('slider-vertical')
 
 		#Test if slider is hide and press buttom to make it visible
-		self.assertFalse(slider.is_displayed())
+		self.assertFalse(slider.is_displayed(), msg='The slider is visible before been clicked')
+		
 		volume_button.click()
 
 		#Test if slider is visible
-		self.assertTrue(slider.is_displayed())
+		self.assertTrue(slider.is_displayed(), msg='The slider is not visible after been clicked')
 
 		#Turn up volume by 25%, default value is 50%
 		height = slider.size['height']
@@ -49,5 +50,9 @@ class VoluneControlTest(StaticLiveServerTestCase):
 		#Test if current volume is 75% with and error of ~8%
 		audio_tag = self.browser.find_element_by_id('player')
 		current_volume = audio_tag.get_attribute('volume')
-		self.assertAlmostEqual(float(current_volume), 0.75, delta=0.08)
+		self.assertAlmostEqual(float(current_volume), 0.75, delta=0.08, msg='The ')
+
+		#Move mouse pointer away from slider and perform click
+		move.move_to_element_with_offset(volume_button, -15, -15).click().perform()
+		self.assertFalse(slider.is_displayed(), msg='The slider is not hiden after click outside')
 
