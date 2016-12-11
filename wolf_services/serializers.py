@@ -6,24 +6,23 @@ class BaseClass():
 	def get_full_url(self, obj):
 		request = self.context.get('request', None)
 		if request is not None:
-			return request.build_absolute_uri(obj.get_absolute_url()) 
+			return request.build_absolute_uri(obj.get_absolute_url())
 		else:
 			return obj.get_absolute_url()
 
-
-class Track(serializers.ModelSerializer,BaseClass):
+class Track(serializers.ModelSerializer, BaseClass):
 	url = serializers.SerializerMethodField('get_full_url', read_only=True)
 	album = serializers.SerializerMethodField('_get_album', read_only=True)
 	def _get_album(self, obj):
 		if obj.album != None:
 			request = self.context.get('request', None)
 			if request is not None:
-				return AlbumSummary(obj.album,context={'request':request}).data
+				return AlbumSummary(obj.album, context={'request':request}).data
 			else:
 				return AlbumSummary(obj.album).data
-		else :
+		else:
 			return None
-	
+
 	class Meta:
 		model = models.Track
 		fields = ('url','id','file','name','type','title','album','artist','genre','artwork',)
