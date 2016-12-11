@@ -2,6 +2,7 @@ from selenium import webdriver
 from selenium.webdriver import ActionChains
 from selenium.webdriver.common.keys import Keys
 from django.test import LiveServerTestCase
+from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 
 class TitleTest(LiveServerTestCase):
 	def setUp(self):
@@ -16,7 +17,7 @@ class TitleTest(LiveServerTestCase):
 		self.assertIn('WolfMusic', self.browser.title)
 
 
-class VoluneControlTest(LiveServerTestCase):
+class VoluneControlTest(StaticLiveServerTestCase):
 	def setUp(self):
 		self.browser =  webdriver.Chrome()
 		self.browser.implicitly_wait(8)
@@ -31,8 +32,11 @@ class VoluneControlTest(LiveServerTestCase):
 	def test_volume_up_slider(self):
 		self.browser.get(self.live_server_url + '/wolfy/mobile')
 		volume_button = self.browser.find_element_by_class_name('volume-button')
-		volume_button.click()
 		slider = self.browser.find_element_by_id('slider-vertical')
+		audio_tag = self.browser.find_element_by_id('player')
+		self.assertFalse(slider.is_displayed())
+		volume_button.click()
+		self.assertTrue(slider.is_displayed())
 		action_chains = ActionChains(self.browser)
-		action_chains.drag_and_drop(slider, 30,0).perform()
+		action_chains.drag_and_drop_by_offset(slider, 30,0).perform()
 
