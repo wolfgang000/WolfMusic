@@ -15,10 +15,8 @@
 		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
 		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 		<script>
-			document.body.innerHTML+='LODING URL';
-
 			var staticDomain = "{% static '' %}"; 
-			var url = {track:"",album:""} ;
+			var url = {track:"",album:"",} ;
 			var loadRootUrls = function() {
 				$.ajax({
 					url: "{% url 'root' %}",
@@ -30,8 +28,6 @@
 					}
 				})
 			};
-			document.body.innerHTML+='LODING LOADED';
-
 		</script>
 		<script src="{% static 'main/std.js' %}"></script>
 		<script src="{% static 'main/mobileScript.js' %}"></script>

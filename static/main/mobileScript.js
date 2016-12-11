@@ -381,10 +381,7 @@ window.onclick = function(event) {
 }
 
 $(document).ready(function() {
-	document.body.innerHTML+='LODING JS';
 	loadRootUrls();
 	loadPlayer();
 	getAlbums();
-	document.body.innerHTML+='FINISH PAGE';
-
 });

@@ -2,11 +2,10 @@ from selenium import webdriver
 from selenium.webdriver import ActionChains
 from selenium.webdriver.common.keys import Keys
 from django.test import LiveServerTestCase
-import time
 
 class TitleTest(LiveServerTestCase):
 	def setUp(self):
-		self.browser = webdriver.Firefox()
+		self.browser =  webdriver.Chrome()
 		self.browser.implicitly_wait(8)
 		
 	def tearDown(self):
@@ -19,8 +18,8 @@ class TitleTest(LiveServerTestCase):
 
 class VoluneControlTest(LiveServerTestCase):
 	def setUp(self):
-		self.browser = webdriver.Chrome()
-		self.browser.implicitly_wait(15)
+		self.browser =  webdriver.Chrome()
+		self.browser.implicitly_wait(8)
 		
 	def tearDown(self):
 		self.browser.quit()
@@ -31,9 +30,7 @@ class VoluneControlTest(LiveServerTestCase):
 	
 	def test_volume_up_slider(self):
 		self.browser.get(self.live_server_url + '/wolfy/mobile')
-
-		print('src='+ self.browser.page_source)
-		volume_button = self.browser.find_element_by_xpath('//div[@class="toolbar"]')
+		volume_button = self.browser.find_element_by_class_name('volume-button')
 		volume_button.click()
 		slider = self.browser.find_element_by_id('slider-vertical')
 		action_chains = ActionChains(self.browser)
