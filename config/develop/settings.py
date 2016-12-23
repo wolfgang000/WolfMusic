@@ -123,7 +123,7 @@ USE_TZ = True
 TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
 
 NOSE_ARGS = [
-    '--verbosity=2',  # verbose output
+#    '--verbosity=2',  # verbose output
     '--with-xunit',  # enable XUnit plugin
     '--xunit-file=xunittest.xml',  # the XUnit report file
     '--with-coverage', # coverage
