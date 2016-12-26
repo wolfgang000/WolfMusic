@@ -12,8 +12,7 @@ class FileTests(TestCase):
 		t_file = file()
 		path = os.path.join(settings.BASE_DIR, 'resources/tests/low_quality_mp3/Movie_On_The_Moon/01-Sono_Tranquile.mp3')
 		t_file.path = path
-		
-		
+
 		self.assertEqual(t_file.path, path)
 
 		with open(path,'rb') as f:
