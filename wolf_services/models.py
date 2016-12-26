@@ -30,7 +30,8 @@ class Track(models.Model):
 	name = models.CharField(max_length=50,default="")
 	type =  models.CharField(max_length=20, choices=FILE_TYPES)
 	file = models.FileField(upload_to='music/tracks')
-	
+	track_number = models.IntegerField()
+
 	def get_absolute_url(self):
 		return reverse('track.detail', args=[str(self.id)])
 	
