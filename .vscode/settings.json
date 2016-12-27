@@ -1,5 +1,20 @@
 // Place your settings in this file to overwrite default and user settings. 
 { 
+// Editor
+    // The number of spaces a tab is equal to. This setting is overriden based on the file contents when `editor.detectIndentation` is on.
+    "editor.tabSize": 4,
+
+    // Insert spaces when pressing Tab. This setting is overriden based on the file contents when `editor.detectIndentation` is on.
+    "editor.insertSpaces": false,
+
+    // When opening a file, `editor.tabSize` and `editor.insertSpaces` will be detected based on the file contents.
+    "editor.detectIndentation": false,
+
+
+
+
+// Python
+
         // Path to Python, you can use a custom version of Python by modifying this setting to include the full path. 
     "python.pythonPath": "/home/wolfgang/.pyenv/versions/fpm_test/bin/python", 
  
