@@ -67,4 +67,9 @@ class Track:
 	def __set_track_number(self, track_number):
 		self.__track_number = track_number
 	track_number = property(__get_track_number, __set_track_number)
+
+	def __eq__(self, other):
+		return self.__dict__ == other.__dict__
 	
+	def __str__(self):
+		return str(self.__dict__)
